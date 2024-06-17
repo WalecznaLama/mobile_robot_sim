@@ -1,15 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Set project name
-project(MobileRobotSim)
+set(CMAKE_CXX_STANDARD 17)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS} include)
 
-# Add include directories
-include_directories(include)
+add_executable(mobile_robot_sim 
+    src/main.cpp 
+    src/robot.cpp 
+    src/grid.cpp 
+    src/astar.cpp 
+    src/sdl_setup.cpp 
+    src/gui.cpp
+)
 
-# Add the executable
-add_executable(mobile_robot_sim src/main.cpp src/robot.cpp src/grid.cpp src/astar.cpp)
-
+target_link_libraries(mobile_robot_sim ${SDL2_LIBRARIES})
