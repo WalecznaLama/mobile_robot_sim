@@ -28,10 +28,13 @@ SDLSetup::~SDLSetup() {
     SDL_Quit();
 }
 
-SDL_Renderer* SDLSetup::getRenderer() {
-    return renderer;
-}
+SDL_Renderer* SDLSetup::getRenderer() { return renderer; }
 
+/// @brief 
+/// @param xCell 
+/// @param yCell 
+/// @param cellSize 
+/// @return 0: No event; -1: exit; 1: set goal; 2: cell toggle occupancy
 int SDLSetup::processEvents(int &xCell, int &yCell, int cellSize) {
     SDL_Event event;
     while (SDL_PollEvent(&event) != 0) {
@@ -49,7 +52,7 @@ int SDLSetup::processEvents(int &xCell, int &yCell, int cellSize) {
                 SDL_GetMouseState(&x, &y);
                 xCell = y / cellSize; // NOTE x/y swapped
                 yCell = x / cellSize;
-                return 2;  // Indicate that occupancy was toggled
+                return 2;
             }
         }
     }

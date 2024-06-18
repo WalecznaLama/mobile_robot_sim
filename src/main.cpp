@@ -28,7 +28,7 @@ int main() {
             quit = true;
         } else if(eventResult == 1){
             goal = eventOutput;
-            path = aStar(robot_point.x, robot_point.y, goal.x, goal.y);  // Recalculate path only if goal changed
+            path = aStar(robot_point.x, robot_point.y, goal.x, goal.y);  // Recalculate path if goal changed
             pathIndex = 0;
         } else if(eventResult == 2){
             Point cellToToggle = eventOutput;

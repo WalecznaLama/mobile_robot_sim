@@ -2,12 +2,8 @@
 
 void drawGrid(SDL_Renderer* renderer, int cellSize, int rows, int cols) {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-    for (int i = 0; i <= rows; ++i) {
-        SDL_RenderDrawLine(renderer, 0, i * cellSize, rows * cellSize, i * cellSize);
-    }
-    for (int i = 0; i <= cols; ++i) {
-        SDL_RenderDrawLine(renderer, i * cellSize, 0, i * cellSize, cols * cellSize);
-    }
+    for (int i = 0; i <= rows; ++i) SDL_RenderDrawLine(renderer, 0, i * cellSize, rows * cellSize, i * cellSize);
+    for (int i = 0; i <= cols; ++i) SDL_RenderDrawLine(renderer, i * cellSize, 0, i * cellSize, cols * cellSize);
 }
 
 void drawRobot(SDL_Renderer* renderer, int x, int y, int cellSize) {
