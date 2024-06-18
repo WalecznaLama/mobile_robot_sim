@@ -9,24 +9,25 @@ const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
 const int CELL_SIZE = SCREEN_WIDTH / COLS;
 
+
 int main() {
     SDLSetup sdlSetup(SCREEN_WIDTH, SCREEN_HEIGHT);
     SDL_Renderer* renderer = sdlSetup.getRenderer();
 
-    Point start_point(0, 0);
-    int goalX = 9, goalY = 9;
-
-    std::vector<Point> path = aStar(start_point.x, start_point.y, goalX, goalY);
-
-    bool quit = false;
-    SDL_Event e;
+    Point robot_point(0, 0);
+    int goalX = 9, goalY = 9;  // Initial goal
+    std::vector<Point> path = aStar(robot_point.x, robot_point.y, goalX, goalY);
     size_t pathIndex = 0;
 
+    bool quit = false;
+
     while (!quit) {
-        while (SDL_PollEvent(&e) != 0) {
-            if (e.type == SDL_QUIT) {
-                quit = true;
-            }
+        int eventResult = sdlSetup.processEvents(goalX, goalY, CELL_SIZE);
+        if (eventResult == 0) {
+            quit = true;
+        } else if(eventResult == 1){
+            path = aStar(robot_point.x, robot_point.y, goalX, goalY);  // Recalculate path only if goal changed
+            pathIndex = 0;
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
@@ -35,12 +36,14 @@ int main() {
         drawGrid(renderer, CELL_SIZE, ROWS, COLS);
         drawObstacles(renderer, CELL_SIZE);
         drawPath(renderer, path, CELL_SIZE);
+
         if (pathIndex < path.size()) {
-            start_point.x = path[pathIndex].x;
-            start_point.y = path[pathIndex].y;
+            robot_point.x = path[pathIndex].x;
+            robot_point.y = path[pathIndex].y;
             pathIndex++;
         }
-        drawRobot(renderer, start_point.x, start_point.y, CELL_SIZE);
+
+        drawRobot(renderer, robot_point.x, robot_point.y, CELL_SIZE);
 
         SDL_RenderPresent(renderer);
         SDL_Delay(200); // Delay to visualize movement

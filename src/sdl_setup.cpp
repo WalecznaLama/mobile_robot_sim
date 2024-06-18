@@ -32,17 +32,18 @@ SDL_Renderer* SDLSetup::getRenderer() {
     return renderer;
 }
 
-bool SDLSetup::processEvents(int &goalX, int &goalY, int cellSize) {
+int SDLSetup::processEvents(int &goalX, int &goalY, int cellSize) {
     SDL_Event event;
-    while (SDL_PollEvent(&event)) {
+    while (SDL_PollEvent(&event) != 0) {
         if (event.type == SDL_QUIT) {
-            return false;
+            return 0;
         } else if (event.type == SDL_MOUSEBUTTONDOWN) {
             int x, y;
             SDL_GetMouseState(&x, &y);
-            goalX = x / cellSize;
-            goalY = y / cellSize;
+            goalX = y / cellSize; // NOTE x/y swapped
+            goalY = x / cellSize;
+            return 1;
         }
     }
-    return true;
+    return -1;
 }
