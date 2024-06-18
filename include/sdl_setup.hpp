@@ -9,7 +9,7 @@ public:
     SDLSetup(int screenWidth, int screenHeight);
     ~SDLSetup();
     SDL_Renderer* getRenderer();
-    int processEvents(int &goalX, int &goalY, int cellSize);
+    int processEvents(int &xCell, int &yCell, int cellSize);
 
 private:
     SDL_Window* window;

@@ -32,18 +32,26 @@ SDL_Renderer* SDLSetup::getRenderer() {
     return renderer;
 }
 
-int SDLSetup::processEvents(int &goalX, int &goalY, int cellSize) {
+int SDLSetup::processEvents(int &xCell, int &yCell, int cellSize) {
     SDL_Event event;
     while (SDL_PollEvent(&event) != 0) {
         if (event.type == SDL_QUIT) {
-            return 0;
+            return -1;
         } else if (event.type == SDL_MOUSEBUTTONDOWN) {
             int x, y;
             SDL_GetMouseState(&x, &y);
-            goalX = y / cellSize; // NOTE x/y swapped
-            goalY = x / cellSize;
+            xCell = y / cellSize; // NOTE x/y swapped
+            yCell = x / cellSize;
             return 1;
+        } else if (event.type == SDL_KEYDOWN) {
+            if (event.key.keysym.sym == SDLK_t) {  // Check if 't' key was pressed
+                int x, y;
+                SDL_GetMouseState(&x, &y);
+                xCell = y / cellSize; // NOTE x/y swapped
+                yCell = x / cellSize;
+                return 2;  // Indicate that occupancy was toggled
+            }
         }
     }
-    return -1;
+    return 0;
 }

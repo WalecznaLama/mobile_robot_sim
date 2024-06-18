@@ -15,19 +15,24 @@ int main() {
     SDL_Renderer* renderer = sdlSetup.getRenderer();
 
     Point robot_point(0, 0);
-    int goalX = 9, goalY = 9;  // Initial goal
-    std::vector<Point> path = aStar(robot_point.x, robot_point.y, goalX, goalY);
+    Point goal(9, 9);  // Initial goal
+    std::vector<Point> path = aStar(robot_point.x, robot_point.y, goal.x, goal.y);
     size_t pathIndex = 0;
 
     bool quit = false;
 
     while (!quit) {
-        int eventResult = sdlSetup.processEvents(goalX, goalY, CELL_SIZE);
-        if (eventResult == 0) {
+        Point eventOutput(-1, -1);
+        int eventResult = sdlSetup.processEvents(eventOutput.x, eventOutput.y, CELL_SIZE);
+        if (eventResult == -1) {
             quit = true;
         } else if(eventResult == 1){
-            path = aStar(robot_point.x, robot_point.y, goalX, goalY);  // Recalculate path only if goal changed
+            goal = eventOutput;
+            path = aStar(robot_point.x, robot_point.y, goal.x, goal.y);  // Recalculate path only if goal changed
             pathIndex = 0;
+        } else if(eventResult == 2){
+            Point cellToToggle = eventOutput;
+            changeOccupancy(cellToToggle);
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);

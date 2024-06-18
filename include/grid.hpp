@@ -15,4 +15,6 @@ struct Point {
     bool operator!=(const Point& other) const { return !(*this == other); }
 };
 
+void changeOccupancy(const Point &cell);
+
 #endif // GRID_HPP
