@@ -31,3 +31,18 @@ SDLSetup::~SDLSetup() {
 SDL_Renderer* SDLSetup::getRenderer() {
     return renderer;
 }
+
+bool SDLSetup::processEvents(int &goalX, int &goalY, int cellSize) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
+            return false;
+        } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            int x, y;
+            SDL_GetMouseState(&x, &y);
+            goalX = x / cellSize;
+            goalY = y / cellSize;
+        }
+    }
+    return true;
+}

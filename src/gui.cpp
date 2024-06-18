@@ -35,3 +35,14 @@ void drawObstacles(SDL_Renderer* renderer, int cellSize) {
         }
     }
 }
+
+void drawPath(SDL_Renderer* renderer, const std::vector<Point>& path, int cellSize) {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    int dot_size = cellSize/5;
+    for (const auto& point : path) {
+        SDL_Rect rect = { (point.x * cellSize) + cellSize/2 - dot_size/2,
+                          (point.y * cellSize) + cellSize/2 - dot_size/2,
+                          dot_size, dot_size };
+        SDL_RenderFillRect(renderer, &rect);
+    }
+}

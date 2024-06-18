@@ -8,6 +8,11 @@ const int COLS = 10;
 
 extern int grid[ROWS][COLS];
 
-void printGrid(int robotX, int robotY);
+struct Point {
+    int x, y;
+    Point(int px, int py) : x(px), y(py) {}
+    bool operator==(const Point& other) const { return x == other.x && y == other.y; }
+    bool operator!=(const Point& other) const { return !(*this == other); }
+};
 
 #endif // GRID_HPP

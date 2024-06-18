@@ -7,7 +7,6 @@ include_directories(${SDL2_INCLUDE_DIRS} include)
 
 add_executable(mobile_robot_sim 
     src/main.cpp 
-    src/robot.cpp 
     src/grid.cpp 
     src/astar.cpp 
     src/sdl_setup.cpp 

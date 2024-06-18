@@ -2,24 +2,20 @@
 #define ASTAR_HPP
 
 #include <vector>
-
-struct Point {
-    int x, y;
-    Point(int px, int py) : x(px), y(py) {}
-    bool operator==(const Point& other) const { return x == other.x && y == other.y; }
-    bool operator!=(const Point& other) const { return !(*this == other); }
-};
+#include <memory>
+#include "grid.hpp"
 
 struct Node {
     Point point;
     double gCost, hCost, fCost;
-    Node* parent;
+    std::shared_ptr<Node> parent;
 
-    Node(Point p, double g, double h, Node* par) : point(p), gCost(g), hCost(h), fCost(g + h), parent(par) {}
+    Node(Point p, double g, double h, std::shared_ptr<Node> par) 
+        : point(p), gCost(g), hCost(h), fCost(g + h), parent(par) {}
 };
 
 struct CompareNode {
-    bool operator()(const Node* a, const Node* b) const {
+    bool operator()(const std::shared_ptr<Node>& a, const std::shared_ptr<Node>& b) const {
         return a->fCost > b->fCost;
     }
 };
