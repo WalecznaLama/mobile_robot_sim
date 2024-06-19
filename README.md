@@ -1,26 +1,57 @@
+
 # MobileRobotSim Project
 
-This project involves creating an object that navigates through a grid using the A* pathfinding algorithm.
+This project simulates a mobile robot navigating through a grid using the A* pathfinding algorithm, visualized with SDL.
 
-## Structure
+## Features
 
-- **include/**: Contains header files.
-- **src/**: Contains the source files including the main program.
+- Grid generation from a CSV file.
+- Dynamic pathfinding with A* algorithm.
+- Interactive GUI using SDL2 for real-time simulation control.
+- Obstacle placement and goal setting through mouse interaction.
+
+## Project Structure
+
+- **include/**: Header files.
+- **src/**: Source files including the main program.
+- **resources/**: Resource files like grid configurations.
 - **CMakeLists.txt**: Build configuration file.
-- **README.md**: Project description and instructions.
+- **README.md**: This project documentation.
+
+## Prerequisites
+
+Ensure you have the following installed:
+- SDL2
+- CMake (version 3.10 or higher)
+- A C++17 compliant compiler
 
 ## Building the Project
 
-To build the project, you need to have CMake installed. Follow these steps:
+To build the project, follow these steps:
 
 1. Navigate to the project directory.
-2. Create a build directory: `mkdir build && cd build`
-3. Run CMake: `cmake ..`
-4. Build the project: `make`
+2. Create a build directory and enter it:
+   ```bash
+   mkdir build && cd build
+   ```
+3. Configure the project with CMake:
+   ```bash
+   cmake ..
+   ```
+4. Build the project:
+   ```bash
+   make
+   ```
 
 ## Running the Project
 
-After building, you can run the executable:
+After building, you can run the executable within the build directory:
 
-```sh
+```bash
 ./mobile_robot_sim
+```
+
+## Interactions
+
+- **Set Goal**: Click on the desired cell to move the goal to that location.
+- **Toggle Obstacles**: Press 'T' and click on a cell to add/remove obstacles.

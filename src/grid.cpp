@@ -1,29 +1,31 @@
 #include "grid.hpp"
-#include <fstream>
-#include <sstream>
-#include <string>
 
-Grid::Grid(const std::string& filename) { loadFromCSV(filename); }
+Grid::Grid(const std::string& filename) {
+    loadFromCSV(filename);
+}
 
 void Grid::loadFromCSV(const std::string& filename) {
     std::ifstream file(filename);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open file: " + filename);
+    }
     std::string line;
-    rows = 0;  // Initialize rows
-    cols = 0;  // Initialize cols
+    rows = 0; // Initialize row count
+    cols = 0; // Initialize column count
 
     while (std::getline(file, line)) {
         std::vector<int> row;
-        std::string cell;
         std::istringstream ss(line);
-        int tempCols = 0;  // Temporary column count
+        std::string cell;
+        int currentRowColumnCount = 0;
 
         while (getline(ss, cell, ',')) {
-            row.push_back(cell == "O" ? 0 : 1);
-            tempCols++;
+            row.push_back(cell == "O" ? 0 : 1); // 'O' represents an empty cell
+            currentRowColumnCount++;
         }
 
-        if (rows == 0) {  // Set cols based on the first row
-            cols = tempCols;
+        if (rows == 0) { // Set column count based on the first row
+            cols = currentRowColumnCount;
         }
 
         grid.push_back(row);
@@ -31,10 +33,12 @@ void Grid::loadFromCSV(const std::string& filename) {
     }
 }
 
-void Grid::changeOccupancy(const Grid::Point &cell) { grid[cell.x][cell.y] ^= 1; } // Toggle between 1 and 0 using XOR
+void Grid::changeOccupancy(const Grid::Point &cell) {
+    grid[cell.x][cell.y] ^= 1; // Toggle between 1 (occupied) and 0 (unoccupied)
+}
 
-const int Grid::getRows() const { return rows; }
+int Grid::getRows() const { return rows; }
 
-const int Grid::getCols() const { return cols; }
+int Grid::getCols() const { return cols; }
 
 const std::vector<std::vector<int>>& Grid::getGrid() const { return grid; }
