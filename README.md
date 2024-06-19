@@ -1,6 +1,6 @@
 # MobileRobotSim Project
 
-This project involves creating a robot that navigates through a grid using the A* pathfinding algorithm.
+This project involves creating an object that navigates through a grid using the A* pathfinding algorithm.
 
 ## Structure
 

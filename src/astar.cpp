@@ -5,24 +5,26 @@
 #include <cmath>
 #include <iostream>
 
+Astar::Astar(const Grid& grid) : _grid(grid) {}
+
 // Check if a position (x, y) is valid within the grid and not an obstacle
-bool isValid(int x, int y) {
-    return (x >= 0 && x < ROWS && y >= 0 && y < COLS && grid[x][y] == 0);
+bool Astar::isValid(int x, int y) {
+    return (x >= 0 && x < _grid.getRows() && y >= 0 && y < _grid.getCols() && _grid.getGrid()[x][y] == 0);
 }
 
-// Calculate the heuristic value (Manhattan distance) from point p to the goal
-double calculateH(Point p, Point goal) {
-    return std::abs(p.x - goal.x) + std::abs(p.y - goal.y);
+// Calculate the heuristic value (Manhattan distance) from current_point to the goal
+double Astar::calculateH(const Grid::Point &current_point, const Grid::Point &goal) {
+    return std::abs(current_point.x - goal.x) + std::abs(current_point.y - goal.y);
 }
 
 // A* pathfinding algorithm implementation
-std::vector<Point> aStar(int startX, int startY, int goalX, int goalY) {
+std::vector<Grid::Point> Astar::aStarPath(int startX, int startY, int goalX, int goalY) {
     // Priority queue to store open nodes, ordered by fCost
     std::priority_queue<std::shared_ptr<Node>, std::vector<std::shared_ptr<Node>>, CompareNode> openList;
     std::vector<std::shared_ptr<Node>> allNodes; // To keep track of all nodes for memory cleanup
 
-    Point start(startX, startY);
-    Point goal(goalX, goalY);
+    Grid::Point start(startX, startY);
+    Grid::Point goal(goalX, goalY);
 
     // Initialize the start node
     auto startNode = std::make_shared<Node>(start, 0, calculateH(start, goal), nullptr);
@@ -30,11 +32,8 @@ std::vector<Point> aStar(int startX, int startY, int goalX, int goalY) {
     allNodes.push_back(startNode);
 
     // Visited array to keep track of visited nodes
-    bool visited[ROWS][COLS] = { false };
+    bool visited[_grid.getRows()][_grid.getCols()] = { false };
     visited[startX][startY] = true;
-
-    // Possible directions for movement (right, down, left, up)
-    std::vector<Point> directions = { Point(0, 1), Point(1, 0), Point(0, -1), Point(-1, 0) };
 
     // Main loop for the A* algorithm
     while (!openList.empty()) {
@@ -44,7 +43,7 @@ std::vector<Point> aStar(int startX, int startY, int goalX, int goalY) {
 
         // If the goal is reached, reconstruct the path
         if (currentNode->point == goal) {
-            std::vector<Point> path;
+            std::vector<Grid::Point> path;
             auto pathNode = currentNode;
             while (pathNode != nullptr) {
                 path.push_back(pathNode->point);
@@ -55,14 +54,14 @@ std::vector<Point> aStar(int startX, int startY, int goalX, int goalY) {
         }
 
         // Explore neighbors
-        for (auto& d : directions) {
+        for (auto& d : _directions) {
             int newX = currentNode->point.x + d.x;
             int newY = currentNode->point.y + d.y;
             if (isValid(newX, newY) && !visited[newX][newY]) {
                 visited[newX][newY] = true; // Mark the neighbor as visited
-                auto neighborNode = std::make_shared<Node>(Point(newX, newY),
+                auto neighborNode = std::make_shared<Node>(Grid::Point(newX, newY),
                                                            currentNode->gCost + 1,
-                                                           calculateH(Point(newX, newY), goal),
+                                                           calculateH(Grid::Point(newX, newY), goal),
                                                            currentNode);
                 openList.push(neighborNode); // Add the neighbor to the open list
                 allNodes.push_back(neighborNode); // Keep track of all nodes
@@ -70,6 +69,5 @@ std::vector<Point> aStar(int startX, int startY, int goalX, int goalY) {
         }
     }
 
-    // If no path is found, return an empty path
-    return {};
+    return {};  // If no path is found, return an empty path
 }
