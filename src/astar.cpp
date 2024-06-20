@@ -6,13 +6,11 @@ double AStar::calculateH(const Grid::Point &current_point, const Grid::Point &go
     return std::hypot(goal.x - current_point.x, goal.y - current_point.y); // Using Euclidean distance for diagonal compatibility
 }
 
-std::vector<Grid::Point> AStar::findPath(const int startX, const int startY, const int goalX, const int goalY) const {
+std::vector<Grid::Point> AStar::findPath(const Grid::Point& start, const Grid::Point& goal) const {
     std::priority_queue<std::shared_ptr<Node>, std::vector<std::shared_ptr<Node>>, CompareNode> openList;
     bool visited[_grid.getRows()][_grid.getCols()] = {};
-    visited[startX][startY] = true;
+    visited[start.x][start.y] = true;
 
-    Grid::Point start(startX, startY);
-    Grid::Point goal(goalX, goalY);
     auto startNode = std::make_shared<Node>(start, 0, calculateH(start, goal), nullptr);
     openList.push(startNode);
 

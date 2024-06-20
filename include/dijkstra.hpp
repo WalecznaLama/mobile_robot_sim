@@ -7,7 +7,7 @@
 class Dijkstra : public IPathfinder {
 public:
     explicit Dijkstra(const Grid& grid);
-    std::vector<Grid::Point> findPath(int startX, int startY, int goalX, int goalY) const override;
+    std::vector<Grid::Point> findPath(const Grid::Point& start, const Grid::Point& goal) const override;
 
 private:
     const Grid& _grid;  // Reference to the grid to use

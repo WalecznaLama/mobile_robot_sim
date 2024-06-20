@@ -1,6 +1,4 @@
 #include <iostream>
-#include <vector>
-#include "grid.hpp"
 #include "astar.hpp"
 #include "dijkstra.hpp"
 #include "sdl_setup.hpp"
@@ -23,18 +21,22 @@ int main() {
     std::string grid_csv_filename = "../resources/grid_50x50.csv"; // Path relative to build directory
     Grid grid(grid_csv_filename);
 
-    // auto pathfinder = createPathfinder("A*", grid);
-    auto pathfinder = createPathfinder("Dijkstra", grid);
+    auto aStarPathfinder = createPathfinder("A*", grid);
+    auto dijkstraPathfinder = createPathfinder("Dijkstra", grid);
 
     const int CELL_SIZE = SCREEN_WIDTH / grid.getCols(); // Calculate cell size based on grid dimensions
     Gui gui(grid.getRows(), grid.getCols(), CELL_SIZE);
     SDLSetup sdlSetup(SCREEN_WIDTH, SCREEN_HEIGHT, CELL_SIZE);
     SDL_Renderer* renderer = sdlSetup.getRenderer();
 
-    Grid::Point robot_point(0, 0); // Starting position of the robot
-    Grid::Point goal(2, 2);        // Initial goal
-    std::vector<Grid::Point> path = pathfinder->findPath(robot_point.x, robot_point.y, goal.x, goal.y);
-    size_t pathIndex = 0;
+    Grid::Point a_star_point(0, 0);   // Starting position of the a_star robot
+    Grid::Point dijkstra_point(0, 0); // Starting position of the dijkstra robot
+
+    Grid::Point goal;
+
+    std::vector<Grid::Point> a_star_path = aStarPathfinder->findPath(a_star_point, goal);
+    std::vector<Grid::Point> dijkstra_path = dijkstraPathfinder->findPath(dijkstra_point, goal);
+    size_t a_star_path_index(0), dijkstra_path_index(0);
 
     bool quit = false;
     while (!quit) {
@@ -42,30 +44,38 @@ int main() {
         int eventResult = sdlSetup.processEvents(eventOutput.x, eventOutput.y);
         if (eventResult == -1) {
             quit = true;  // Exit if the quit event is detected
-        } else if (eventResult == 1) {
-            goal = eventOutput;  // Set new goal and recalculate path
-            if (grid.isCellFree(goal)){
-                path = pathfinder->findPath(robot_point.x, robot_point.y, goal.x, goal.y);
-                pathIndex = 0;
+        } else if (eventResult == 1) { // Set new goal and recalculate path
+            if (grid.isCellFree(eventOutput)){
+                goal = eventOutput;
+                a_star_path = aStarPathfinder->findPath(a_star_point, goal);
+                a_star_path_index = 0;
+                dijkstra_path = dijkstraPathfinder->findPath(dijkstra_point, goal);
+                dijkstra_path_index = 0;
             } else std::cout << "The selected cell is occupied. Ignoring the goal...\n" << std::flush;
 
         } else if (eventResult == 2) {
             grid.changeOccupancy(eventOutput);  // Toggle occupancy at the specified cell
         }
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE); // Black background
         SDL_RenderClear(renderer);
         gui.drawGrid(renderer);
         gui.drawObstacles(renderer, grid.getGrid());
-        gui.drawPath(renderer, path);
 
-        if (pathIndex < path.size()) {
-            robot_point.x = path[pathIndex].x;  // Update robot's position along the path
-            robot_point.y = path[pathIndex].y;
-            pathIndex++;
+        gui.drawPath(renderer, {a_star_path, dijkstra_path});
+
+        if (a_star_path_index < a_star_path.size()) {
+            a_star_point = a_star_path[a_star_path_index];  // Update robot's position along the path - A*
+            a_star_path_index++;
         }
 
-        gui.drawRobot(renderer, robot_point.x, robot_point.y);
+        if (dijkstra_path_index < dijkstra_path.size()) {
+            dijkstra_point = dijkstra_path[dijkstra_path_index];  // Update robot's position along the path - Dijkstra
+            dijkstra_path_index++;
+        }
+
+        gui.drawRobot(renderer, {a_star_point, dijkstra_point});
+
         SDL_RenderPresent(renderer);
         SDL_Delay(200); // Delay to visualize movement
     }

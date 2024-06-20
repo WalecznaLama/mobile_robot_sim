@@ -12,10 +12,18 @@ void Gui::drawGrid(SDL_Renderer* renderer) {
     }
 }
 
-void Gui::drawRobot(SDL_Renderer* renderer, int x, int y) {
-    SDL_Rect rect = {y * _cellSize, x * _cellSize, _cellSize, _cellSize};
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderFillRect(renderer, &rect);
+void Gui::drawRobot(SDL_Renderer* renderer, const std::vector<Grid::Point>& points) { // TODO solve the overlap problem 
+    int color_index = 0;
+    for (const auto& point : points) {
+        SDL_SetRenderDrawColor(renderer,
+                       _draw_colors[color_index % _draw_colors.size()].r,
+                       _draw_colors[color_index % _draw_colors.size()].g,
+                       _draw_colors[color_index % _draw_colors.size()].b,
+                       SDL_ALPHA_OPAQUE);
+        SDL_Rect rect = {point.y * _cellSize, point.x * _cellSize, _cellSize, _cellSize};
+        SDL_RenderFillRect(renderer, &rect);
+        color_index++;
+    }
 }
 
 void Gui::drawObstacles(SDL_Renderer* renderer, const std::vector<std::vector<int>>& grid) {
@@ -30,15 +38,19 @@ void Gui::drawObstacles(SDL_Renderer* renderer, const std::vector<std::vector<in
     }
 }
 
-void Gui::drawPath(SDL_Renderer* renderer, const std::vector<Grid::Point>& path) {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+void Gui::drawPath(SDL_Renderer* renderer, const std::vector<std::vector<Grid::Point>>& paths) { // TODO solve the overlap problem 
     int dot_size = _cellSize / 5;
-    for (const auto& point : path) {
-        SDL_Rect rect = {
-            (point.y * _cellSize) + _cellSize / 2 - dot_size / 2,
-            (point.x * _cellSize) + _cellSize / 2 - dot_size / 2,
-            dot_size, dot_size
-        };
-        SDL_RenderFillRect(renderer, &rect);
+    int color_index = 0;
+    for (const auto& path : paths) {
+        SDL_SetRenderDrawColor(renderer,
+                               _draw_colors[color_index % _draw_colors.size()].r,
+                               _draw_colors[color_index % _draw_colors.size()].g,
+                               _draw_colors[color_index % _draw_colors.size()].b,
+                               SDL_ALPHA_OPAQUE);
+        for (const auto& point : path) {
+            SDL_Rect rect = {(point.y * _cellSize) + _cellSize / 2 - dot_size / 2, (point.x * _cellSize) + _cellSize / 2 - dot_size / 2, dot_size, dot_size};
+            SDL_RenderFillRect(renderer, &rect);
+        }
+        color_index++;
     }
 }

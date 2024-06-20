@@ -12,7 +12,7 @@
 class AStar : public IPathfinder {
 public:
     explicit AStar(const Grid& grid);
-    std::vector<Grid::Point> findPath(const int startX, const int startY, const int goalX, const int goalY) const override;
+    std::vector<Grid::Point> findPath(const Grid::Point& start, const Grid::Point& goal) const override;
 
 private:
     struct Node {

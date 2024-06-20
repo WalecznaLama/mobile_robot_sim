@@ -5,9 +5,7 @@
 
 Dijkstra::Dijkstra(const Grid& grid) : _grid(grid) {}
 
-std::vector<Grid::Point> Dijkstra::findPath(int startX, int startY, int goalX, int goalY) const {
-    Grid::Point start(startX, startY);
-    Grid::Point goal(goalX, goalY);
+std::vector<Grid::Point> Dijkstra::findPath(const Grid::Point& start, const Grid::Point& goal) const {
 
     auto cmp = [](const std::pair<Grid::Point, double>& left, const std::pair<Grid::Point, double>& right) {
         return left.second > right.second;

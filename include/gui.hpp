@@ -14,16 +14,20 @@ public:
     void drawGrid(SDL_Renderer* renderer);
 
     // Draws the robot at position (x, y) using the provided SDL renderer.
-    void drawRobot(SDL_Renderer* renderer, int x, int y);
+    void drawRobot(SDL_Renderer* renderer, const std::vector<Grid::Point>& points);
 
     // Draws obstacles on the grid based on the grid's state using the provided SDL renderer.
     void drawObstacles(SDL_Renderer* renderer, const std::vector<std::vector<int>>& grid);
 
     // Draws the path using the provided SDL renderer.
-    void drawPath(SDL_Renderer* renderer, const std::vector<Grid::Point>& path);
+    void drawPath(SDL_Renderer* renderer, const std::vector<std::vector<Grid::Point>>& paths);
 
 private:
     int _n_rows, _n_cols, _cellSize;  // Grid dimensions and cell size
+    
+    std::vector<SDL_Color> _draw_colors = {{255, 0, 0, SDL_ALPHA_OPAQUE},
+                                     {0, 255, 0, SDL_ALPHA_OPAQUE},
+                                     {0, 0, 255, SDL_ALPHA_OPAQUE}}; // RGB colors
 };
 
 #endif // GUI_HPP

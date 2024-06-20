@@ -9,7 +9,7 @@ class IPathfinder {
 public:
     virtual ~IPathfinder() {}
 
-    virtual std::vector<Grid::Point> findPath(int startX, int startY, int goalX, int goalY) const = 0;
+    virtual std::vector<Grid::Point> findPath(const Grid::Point& start, const Grid::Point& goal) const = 0;
 };
 
 #endif // IPATHFINDER_HPP
