@@ -2,16 +2,29 @@
 #include <vector>
 #include "grid.hpp"
 #include "astar.hpp"
+#include "dijkstra.hpp"
 #include "sdl_setup.hpp"
 #include "gui.hpp"
 
 const int SCREEN_WIDTH = 1200;
 const int SCREEN_HEIGHT = 1200;
 
+std::unique_ptr<IPathfinder> createPathfinder(const std::string& type, const Grid& grid) {
+    if (type == "A*") {
+        return std::make_unique<AStar>(grid);
+    } else if (type == "Dijkstra") {
+        return std::make_unique<Dijkstra>(grid);
+    } else {
+        throw std::invalid_argument("Unknown pathfinding type.");
+    }
+}
+
 int main() {
     std::string grid_csv_filename = "../resources/grid_50x50.csv"; // Path relative to build directory
     Grid grid(grid_csv_filename);
-    AStar aStar(grid);
+
+    // auto pathfinder = createPathfinder("A*", grid);
+    auto pathfinder = createPathfinder("Dijkstra", grid);
 
     const int CELL_SIZE = SCREEN_WIDTH / grid.getCols(); // Calculate cell size based on grid dimensions
     Gui gui(grid.getRows(), grid.getCols(), CELL_SIZE);
@@ -20,19 +33,22 @@ int main() {
 
     Grid::Point robot_point(0, 0); // Starting position of the robot
     Grid::Point goal(2, 2);        // Initial goal
-    std::vector<Grid::Point> path = aStar.findPath(robot_point.x, robot_point.y, goal.x, goal.y);
+    std::vector<Grid::Point> path = pathfinder->findPath(robot_point.x, robot_point.y, goal.x, goal.y);
     size_t pathIndex = 0;
 
     bool quit = false;
     while (!quit) {
-        Grid::Point eventOutput(-1, -1);
+        Grid::Point eventOutput;
         int eventResult = sdlSetup.processEvents(eventOutput.x, eventOutput.y);
         if (eventResult == -1) {
             quit = true;  // Exit if the quit event is detected
         } else if (eventResult == 1) {
             goal = eventOutput;  // Set new goal and recalculate path
-            path = aStar.findPath(robot_point.x, robot_point.y, goal.x, goal.y);
-            pathIndex = 0;
+            if (grid.isCellFree(goal)){
+                path = pathfinder->findPath(robot_point.x, robot_point.y, goal.x, goal.y);
+                pathIndex = 0;
+            } else std::cout << "The selected cell is occupied. Ignoring the goal...\n" << std::flush;
+
         } else if (eventResult == 2) {
             grid.changeOccupancy(eventOutput);  // Toggle occupancy at the specified cell
         }

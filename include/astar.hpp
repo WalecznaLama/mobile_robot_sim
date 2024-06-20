@@ -1,8 +1,7 @@
 #ifndef ASTAR_HPP
 #define ASTAR_HPP
 
-#include "grid.hpp"
-#include <vector>
+#include "IPathfinder.hpp"
 #include <memory>
 #include <queue>
 #include <algorithm>
@@ -10,10 +9,10 @@
 #include <iostream>
 
 // Implements the A* pathfinding algorithm on a grid.
-class AStar {
+class AStar : public IPathfinder {
 public:
     explicit AStar(const Grid& grid);
-    std::vector<Grid::Point> findPath(int startX, int startY, int goalX, int goalY);
+    std::vector<Grid::Point> findPath(const int startX, const int startY, const int goalX, const int goalY) const override;
 
 private:
     struct Node {
@@ -31,14 +30,10 @@ private:
         }
     };
 
-    bool isValid(int x, int y, int dirX, int dirY);
-    double calculateH(const Grid::Point& current_point, const Grid::Point& goal);
+    double calculateH(const Grid::Point& current_point, const Grid::Point& goal) const;
 
     const Grid& _grid;
-    std::vector<Grid::Point> _directions = {
-        Grid::Point(1, 0), Grid::Point(0, 1), Grid::Point(-1, 0), Grid::Point(0, -1),
-        Grid::Point(1, 1), Grid::Point(-1, 1), Grid::Point(-1, -1), Grid::Point(1, -1)
-    };
+
 };
 
 #endif // ASTAR_HPP

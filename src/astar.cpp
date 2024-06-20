@@ -2,19 +2,11 @@
 
 AStar::AStar(const Grid& grid) : _grid(grid) {}
 
-bool AStar::isValid(int x, int y, int dirX, int dirY) {
-    if (!(x >= 0 && x < _grid.getRows() && y >= 0 && y < _grid.getCols() && _grid.getGrid()[x][y] == 0))
-        return false;
-    if (std::abs(dirX) + std::abs(dirY) == 2) // Diagonal move
-        return _grid.getGrid()[x - dirX][y] == 0 && _grid.getGrid()[x][y - dirY] == 0;
-    return true;
-}
-
-double AStar::calculateH(const Grid::Point &current_point, const Grid::Point &goal) {
+double AStar::calculateH(const Grid::Point &current_point, const Grid::Point &goal) const {
     return std::hypot(goal.x - current_point.x, goal.y - current_point.y); // Using Euclidean distance for diagonal compatibility
 }
 
-std::vector<Grid::Point> AStar::findPath(int startX, int startY, int goalX, int goalY) {
+std::vector<Grid::Point> AStar::findPath(const int startX, const int startY, const int goalX, const int goalY) const {
     std::priority_queue<std::shared_ptr<Node>, std::vector<std::shared_ptr<Node>>, CompareNode> openList;
     bool visited[_grid.getRows()][_grid.getCols()] = {};
     visited[startX][startY] = true;
@@ -37,15 +29,14 @@ std::vector<Grid::Point> AStar::findPath(int startX, int startY, int goalX, int 
             return path;
         }
 
-        for (auto& direction : _directions) {
-            int newX = currentNode->point.x + direction.x;
-            int newY = currentNode->point.y + direction.y;
-            if (isValid(newX, newY, direction.x, direction.y) && !visited[newX][newY]) {
-                visited[newX][newY] = true;
-                double moveCost = (std::abs(direction.x) + std::abs(direction.y) == 2) ? 1.414 : 1;
-                auto neighborNode = std::make_shared<Node>(Grid::Point(newX, newY),
+        for (auto& direction : _grid.move_directions) {
+            Grid::Point newCell(currentNode->point.x + direction.x, currentNode->point.y + direction.y);
+            if (_grid.isWalkable(newCell, direction.x, direction.y) && !visited[newCell.x][newCell.y]) {
+                visited[newCell.x][newCell.y] = true;
+                double moveCost = _grid.cost(direction);
+                auto neighborNode = std::make_shared<Node>(newCell,
                                                            currentNode->gCost + moveCost,
-                                                           calculateH(Grid::Point(newX, newY), goal),
+                                                           calculateH(newCell, goal),
                                                            currentNode);
                 openList.push(neighborNode);
             }

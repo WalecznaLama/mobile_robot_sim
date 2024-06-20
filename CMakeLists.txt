@@ -11,9 +11,10 @@ include_directories(${SDL2_INCLUDE_DIRS} include)
 add_executable(mobile_robot_sim 
     src/main.cpp 
     src/grid.cpp 
-    src/astar.cpp 
     src/sdl_setup.cpp 
     src/gui.cpp
+    src/astar.cpp 
+    src/dijkstra.cpp
 )
 
 target_link_libraries(mobile_robot_sim ${SDL2_LIBRARIES})
