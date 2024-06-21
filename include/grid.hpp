@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <map>
 
 // Represents a grid loaded from a CSV file where each cell can have different states.
 class Grid {

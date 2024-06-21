@@ -2,7 +2,7 @@
 #define DIJKSTRA_HPP
 
 #include "IPathfinder.hpp"
-#include <map>
+
 
 class Dijkstra : public IPathfinder {
 public:

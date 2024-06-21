@@ -12,17 +12,35 @@ void Gui::drawGrid(SDL_Renderer* renderer) {
     }
 }
 
-void Gui::drawRobot(SDL_Renderer* renderer, const std::vector<Grid::Point>& points) { // TODO solve the overlap problem 
-    int color_index = 0;
-    for (const auto& point : points) {
-        SDL_SetRenderDrawColor(renderer,
-                       _draw_colors[color_index % _draw_colors.size()].r,
-                       _draw_colors[color_index % _draw_colors.size()].g,
-                       _draw_colors[color_index % _draw_colors.size()].b,
-                       SDL_ALPHA_OPAQUE);
-        SDL_Rect rect = {point.y * _cellSize, point.x * _cellSize, _cellSize, _cellSize};
-        SDL_RenderFillRect(renderer, &rect);
-        color_index++;
+void Gui::drawRobot(SDL_Renderer* renderer, const std::vector<Grid::Point>& points) {
+    // Map to track all robots at each position
+    std::map<std::pair<int, int>, std::vector<int>> position_map;
+
+    // Populate the map with index of robots at each position
+    for (size_t i = 0; i < points.size(); ++i) {
+        position_map[{points[i].x, points[i].y}].push_back(i);
+    }
+
+    // Draw each robot position
+    for (const auto& entry : position_map) {
+        auto& pos = entry.first; // The grid position (x, y)
+        const auto& indexes = entry.second; // Vector of robot indexes at this position
+
+        // Calculate stripe width
+        int stripe_width = _cellSize / indexes.size();
+
+        // Draw stripes for each robot at this position
+        for (size_t j = 0; j < indexes.size(); ++j) {
+            SDL_SetRenderDrawColor(renderer,
+                                   _draw_colors[indexes[j] % _draw_colors.size()].r,
+                                   _draw_colors[indexes[j] % _draw_colors.size()].g,
+                                   _draw_colors[indexes[j] % _draw_colors.size()].b,
+                                   SDL_ALPHA_OPAQUE);
+            for (int stripe = j * stripe_width; stripe < _cellSize; stripe += indexes.size() * stripe_width) {
+                SDL_Rect rect = {pos.second * _cellSize + stripe, pos.first * _cellSize, stripe_width, _cellSize};
+                SDL_RenderFillRect(renderer, &rect);
+            }
+        }
     }
 }
 
@@ -38,19 +56,46 @@ void Gui::drawObstacles(SDL_Renderer* renderer, const std::vector<std::vector<in
     }
 }
 
-void Gui::drawPath(SDL_Renderer* renderer, const std::vector<std::vector<Grid::Point>>& paths) { // TODO solve the overlap problem 
-    int dot_size = _cellSize / 5;
-    int color_index = 0;
-    for (const auto& path : paths) {
-        SDL_SetRenderDrawColor(renderer,
-                               _draw_colors[color_index % _draw_colors.size()].r,
-                               _draw_colors[color_index % _draw_colors.size()].g,
-                               _draw_colors[color_index % _draw_colors.size()].b,
-                               SDL_ALPHA_OPAQUE);
-        for (const auto& point : path) {
-            SDL_Rect rect = {(point.y * _cellSize) + _cellSize / 2 - dot_size / 2, (point.x * _cellSize) + _cellSize / 2 - dot_size / 2, dot_size, dot_size};
+void Gui::drawPath(SDL_Renderer* renderer, const std::vector<std::vector<Grid::Point>>& paths) {
+    std::map<Grid::Point, std::vector<int>> pathPointsMap;
+    int dot_size = _cellSize / 3;
+
+    // Map each point to the paths that include it
+    for (size_t i = 0; i < paths.size(); ++i) {
+        for (const auto& point : paths[i]) {
+            pathPointsMap[point].push_back(i);
+        }
+    }
+
+    // Draw paths, adjusting for overlaps
+    for (const auto& entry : pathPointsMap) {
+        const auto& point = entry.first; // The grid point
+        const auto& indexes = entry.second; // Vector of path indexes at this point
+
+        if (indexes.size() > 1) { // Multiple paths at this point
+            int slice_width = dot_size / indexes.size(); // Adjust the dot size based on overlap
+            for (int j = 0; j < indexes.size(); ++j) {
+                SDL_SetRenderDrawColor(renderer,
+                                       _draw_colors[indexes[j] % _draw_colors.size()].r,
+                                       _draw_colors[indexes[j] % _draw_colors.size()].g,
+                                       _draw_colors[indexes[j] % _draw_colors.size()].b,
+                                       SDL_ALPHA_OPAQUE);
+                SDL_Rect rect = {(point.y * _cellSize) + _cellSize / 2 - dot_size / 2 + slice_width * j,
+                                 (point.x * _cellSize) + _cellSize / 2 - dot_size / 2,
+                                 slice_width, // width adjusted for overlap
+                                 dot_size};
+                SDL_RenderFillRect(renderer, &rect);
+            }
+        } else { // Single path at this point
+            SDL_SetRenderDrawColor(renderer,
+                                   _draw_colors[indexes[0] % _draw_colors.size()].r,
+                                   _draw_colors[indexes[0] % _draw_colors.size()].g,
+                                   _draw_colors[indexes[0] % _draw_colors.size()].b,
+                                   SDL_ALPHA_OPAQUE);
+            SDL_Rect rect = {(point.y * _cellSize) + _cellSize / 2 - dot_size / 2,
+                             (point.x * _cellSize) + _cellSize / 2 - dot_size / 2,
+                             dot_size, dot_size};
             SDL_RenderFillRect(renderer, &rect);
         }
-        color_index++;
     }
 }
