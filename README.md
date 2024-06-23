@@ -1,12 +1,12 @@
 
 # MobileRobotSim Project
 
-This project simulates a mobile robot navigating through a grid using the A* pathfinding algorithm, visualized with SDL.
+This project simulates a mobile robot navigating through a grid using the A* and Dijkstra pathfinding algorithm, visualized with SDL.
 
 ## Features
 
 - Grid generation from a CSV file.
-- Dynamic pathfinding with A* algorithm.
+- Dynamic pathfinding with A* and Dijkstra algorithm.
 - Interactive GUI using SDL2 for real-time simulation control.
 - Obstacle placement and goal setting through mouse interaction.
 
