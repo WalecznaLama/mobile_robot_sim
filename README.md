@@ -6,7 +6,7 @@ This project simulates a mobile robot navigating through a grid using the A* and
 ## Features
 
 - Grid generation from a CSV file.
-- Dynamic pathfinding with A* and Dijkstra algorithm.
+- Dynamic pathfinding with A* and Dijkstra algorithms.
 - Interactive GUI using SDL2 for real-time simulation control.
 - Obstacle placement and goal setting through mouse interaction.
 
@@ -14,7 +14,7 @@ This project simulates a mobile robot navigating through a grid using the A* and
 
 - **include/**: Header files.
 - **src/**: Source files including the main program.
-- **resources/**: Resource files like grid configurations.
+- **resources/**: Grid configurations.
 - **CMakeLists.txt**: Build configuration file.
 - **README.md**: This project documentation.
 
